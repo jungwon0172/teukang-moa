@@ -6,7 +6,7 @@ SITE_NAME = "특강모아"
 SITE_DOMAIN = "https://teukgangmoa.vercel.app"  # TODO: 커스텀 도메인 구매 후 교체
 ADSENSE_PUB = "ca-pub-2557338953436433"
 CONTACT_EMAIL = "yjw2172@naver.com"
-NAVER_VERIFY = "REPLACE_WITH_NAVER_SITE_VERIFICATION_TOKEN"  # TODO: 네이버 서치어드바이저 발급 토큰으로 교체
+NAVER_VERIFY = "c210150a24029e5660d54cb50a0b4fe6cb31aa85"
 
 # 이번 개편의 원칙: "내가 직접 가서 들을 수 있는" 오프라인 강연·강좌만 수록.
 # 온라인 강의 중심 플랫폼(인프런, 패스트캠퍼스, 클래스101 등)은 제외하고
@@ -335,6 +335,36 @@ def ad_slot():
 </div>
 """
 
+def cookie_banner_html(prefix):
+    return f"""<div class="cookie-banner" id="cookie-banner">
+  <div class="row">
+    <p>{SITE_NAME}는 Google AdSense를 통해 광고를 제공하며, 서비스 개선과 맞춤 광고를 위해 쿠키를 사용합니다. 자세한 내용은 <a href="{prefix}privacy.html">개인정보처리방침</a>에서 확인하실 수 있습니다.</p>
+    <div class="actions">
+      <button class="decline" id="cookie-decline" type="button">거부</button>
+      <button class="accept" id="cookie-accept" type="button">동의</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){{
+  try {{
+    var KEY = 'teukgangmoa_cookie_consent';
+    var banner = document.getElementById('cookie-banner');
+    var stored = localStorage.getItem(KEY);
+    if(!stored){{ banner.classList.add('show'); }}
+    document.getElementById('cookie-accept').addEventListener('click', function(){{
+      localStorage.setItem(KEY, 'accepted');
+      banner.classList.remove('show');
+    }});
+    document.getElementById('cookie-decline').addEventListener('click', function(){{
+      localStorage.setItem(KEY, 'declined');
+      banner.classList.remove('show');
+    }});
+  }} catch(e) {{ /* localStorage unavailable — banner simply won't persist */ }}
+}})();
+</script>
+"""
+
 def footer_html(prefix):
     cat_links = "".join(
         f'<a href="{prefix}category/{cid}.html">{c["name"]}</a>' for cid, c in CATEGORIES.items()
@@ -362,13 +392,13 @@ def footer_html(prefix):
     if(!e.target.closest('.site-header')) document.querySelector('.main-nav')?.classList.remove('open');
   }});
 </script>
-</body>
-</html>
 """
 
 def page(title, description, body, path_depth=0, canonical_path=""):
     prefix = "../" * path_depth
-    return head(title, description, path_depth, canonical_path) + header_html(prefix) + body + footer_html(prefix)
+    return (head(title, description, path_depth, canonical_path)
+            + header_html(prefix) + body + footer_html(prefix)
+            + cookie_banner_html(prefix) + "</body>\n</html>\n")
 
 def write(relpath, content):
     full = os.path.join(ROOT, relpath)

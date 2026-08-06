@@ -246,6 +246,31 @@ footer .foot-links a:hover{ color: var(--ink); }
 footer .copyright{ font-size:12px; color: var(--ink-faint); font-family: var(--font-mono); }
 footer .foot-note{ font-size:12.5px; color: var(--ink-faint); max-width:70ch; margin-top:14px; }
 
+.cookie-banner{
+  position: fixed; left:0; right:0; bottom:0; z-index: 100;
+  background: var(--ink); color: var(--paper);
+  border-top: 1px solid var(--line-strong);
+  padding: 16px 24px;
+  display:none;
+}
+.cookie-banner.show{ display:block; }
+.cookie-banner .row{
+  max-width: var(--max); margin:0 auto;
+  display:flex; align-items:center; justify-content:space-between;
+  gap: 20px; flex-wrap:wrap;
+}
+.cookie-banner p{
+  margin:0; font-size:13px; color: rgba(239,238,230,0.85); max-width: 62ch;
+}
+.cookie-banner a{ text-decoration:underline; color: var(--paper); }
+.cookie-banner .actions{ display:flex; gap:10px; flex-shrink:0; }
+.cookie-banner button{
+  font-family: var(--font-mono); font-size:12px; padding: 9px 16px;
+  border-radius:2px; cursor:pointer; border:1px solid var(--paper);
+}
+.cookie-banner .accept{ background: var(--paper); color: var(--ink); font-weight:600; }
+.cookie-banner .decline{ background: transparent; color: var(--paper); }
+
 .ad-slot{
   margin: 44px 0; padding: 18px; border:1px dashed var(--line-strong);
   text-align:center; font-family: var(--font-mono); font-size:11px; color: var(--ink-faint);
