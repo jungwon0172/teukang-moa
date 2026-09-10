@@ -415,16 +415,25 @@ def header_html(prefix):
 """
 
 def ad_slot():
-    return f"""<div class="ad-slot wrap">
-  <ins class="adsbygoogle"
-       style="display:block"
-       data-ad-client="{ADSENSE_PUB}"
-       data-ad-slot=""
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({{}});</script>
+    # 애드센스 승인 전에는 실제 adsbygoogle 스크립트를 넣지 않습니다.
+    # data-ad-slot이 빈 값인 상태로 auto/full-width-responsive 태그를 넣으면
+    # 구글 스크립트가 빈 슬롯에 큰 여백을 예약해 버려 화면이 깨진 것처럼 보입니다.
+    # 승인 후 실제 슬롯 ID를 받으면 아래 REAL_AD_SNIPPET으로 이 return 값을 바꿔주세요.
+    return """<div class="ad-slot wrap">
+  <span>광고 영역 · 애드센스 승인 후 표시됩니다</span>
 </div>
 """
+
+# 승인 후 사용할 실제 코드 (참고용, 지금은 사용하지 않음):
+# REAL_AD_SNIPPET = f'''<div class="ad-slot wrap">
+#   <ins class="adsbygoogle"
+#        style="display:block"
+#        data-ad-client="{ADSENSE_PUB}"
+#        data-ad-slot="여기에_승인후_발급받은_슬롯ID"
+#        data-ad-format="auto"
+#        data-full-width-responsive="true"></ins>
+#   <script>(adsbygoogle = window.adsbygoogle || []).push({{}});</script>
+# </div>'''
 
 def cookie_banner_html(prefix):
     return f"""<div class="cookie-banner" id="cookie-banner">
