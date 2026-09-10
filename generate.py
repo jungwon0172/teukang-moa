@@ -489,6 +489,7 @@ def page(title, description, body, path_depth=0, canonical_path=""):
     prefix = "../" * path_depth
     return (head(title, description, path_depth, canonical_path)
             + header_html(prefix) + body + footer_html(prefix)
+            + ad_slot()
             + cookie_banner_html(prefix) + "</body>\n</html>\n")
 
 def write(relpath, content):
@@ -526,7 +527,6 @@ def build_index():
         cards = ""
         for p in cat_platforms(cid)[:3]:
             cards += stub_card(p, prefix="")
-        place_ad = (cid == "business")
         sections += f"""
     <div class="section-head">
       <div>
@@ -537,7 +537,6 @@ def build_index():
     </div>
     <div class="card-grid">{cards}</div>
     <div style="margin-top:18px;"><a href="category/{cid}.html" class="stub-card go" style="border:none;">{c['short']} 전체 보기 →</a></div>
-    {ad_slot() if place_ad else ""}
 """
 
     body = f"""
@@ -587,7 +586,6 @@ def build_categories():
       <h2>수록된 현장 강연처 {len(cat_platforms(cid))}곳</h2>
     </div>
     <div class="card-grid">{cards}</div>
-    {ad_slot()}
   </div>
 </section>
 """
@@ -633,7 +631,6 @@ def build_platforms():
       <a class="btn ghost" href="../category/{p['category']}.html">{c['name']} 더 보기</a>
     </div>
     <div class="disclaimer">본 페이지는 {p['name']}의 공개된 정보를 바탕으로 요약 정리한 안내이며, 실제 강좌 일정·비용·신청 조건은 지점·시즌에 따라 달라질 수 있습니다. 정확한 정보와 신청은 반드시 공식 사이트에서 확인해 주세요.</div>
-    {ad_slot()}
   </div>
 </section>
 """
