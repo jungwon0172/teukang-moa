@@ -1,0 +1,49 @@
+# 특강모아
+
+> 직접 현장에 참석해서 듣는 오프라인 강연·강좌 신청처 19곳을 5개 카테고리로 정리한 한국어 디렉토리. 온라인 강의 중심 플랫폼은 제외. 신청·결제는 각 공식 사이트에서 진행하며 이 사이트는 정보 안내만 제공함.
+
+정보 확인일: 2026-10-31 / 문의: yjw2172@naver.com
+
+## 카테고리
+- [백화점·마트 문화센터](https://teukang-moa.vercel.app/category/culture.html): 전국 지점에서 매 시즌 강좌를 열고, 현장에서 바로 수강하는 가장 대중적인 오프라인 강좌 창구입니다.
+- [도서관·공공 강연](https://teukang-moa.vercel.app/category/public.html): 도서관과 지자체가 무료 또는 저비용으로 여는 인문학 강연·평생교육 강좌입니다.
+- [경영자·직무 특강](https://teukang-moa.vercel.app/category/business.html): 현장 강의실에 모여 듣는 경영 전략, 리더십, 직무 역량 특강입니다.
+- [북토크·살롱 모임](https://teukang-moa.vercel.app/category/salon.html): 책방과 서점, 커뮤니티 공간에서 저자·전문가를 직접 만나는 소규모 모임형 강연입니다.
+- [원데이클래스·액티비티](https://teukang-moa.vercel.app/category/oneday.html): 하루 안에 현장에서 배우고 끝내는 실습형 원데이클래스·체험 모임입니다.
+
+## 신청처
+### 백화점·마트 문화센터
+- [현대백화점 문화센터](https://teukang-moa.vercel.app/platform/hyundai-culture.html): 전국 현대백화점 점포에서 여는 시즌 강좌 (진행 방식: 오프라인 정규 강좌 (시즌제, 지점 방문) / 비용: 유료 (강좌별 상이))
+- [롯데백화점 문화센터](https://teukang-moa.vercel.app/platform/lotte-culture.html): 전국 롯데백화점 지점의 현장 강좌 (진행 방식: 오프라인 정규 강좌 (시즌제, 지점 방문) / 비용: 유료 (강좌별 상이))
+- [신세계 아카데미](https://teukang-moa.vercel.app/platform/shinsegae-academy.html): 신세계백화점이 운영하는 문화 아카데미 (진행 방식: 오프라인 정규 강좌 (시즌제, 지점 방문) / 비용: 유료 (강좌별 상이))
+- [이마트 문화센터](https://teukang-moa.vercel.app/platform/emart-culture.html): 전국 이마트 매장의 생활 밀착 강좌 (진행 방식: 오프라인 정규 강좌 (시즌제, 매장 방문) / 비용: 유료 (강좌별 상이))
+- [갤러리아백화점 문화센터](https://teukang-moa.vercel.app/platform/galleria-culture.html): 타임월드·센터시티 등 지점별 문화센터 (진행 방식: 오프라인 정규 강좌 (시즌제, 지점 방문) / 비용: 유료 (강좌별 상이))
+- [AK플라자 문화아카데미](https://teukang-moa.vercel.app/platform/akplaza-academy.html): 분당·평택 등 AK플라자 지점 아카데미 (진행 방식: 오프라인 정규 강좌 (시즌제, 지점 방문) / 비용: 유료 (강좌별 상이))
+- [홈플러스 문화센터](https://teukang-moa.vercel.app/platform/homeplus-culture.html): 전국 홈플러스 매장의 학기제 강좌 (진행 방식: 오프라인 정규 강좌 (학기제, 매장 방문) / 비용: 유료 (강좌별 상이))
+
+### 도서관·공공 강연
+- [서울도서관](https://teukang-moa.vercel.app/platform/seoul-library.html): 서울시청 옆 서울도서관의 시민 강좌 (진행 방식: 오프라인 강좌·강연 (일부 온라인 병행) / 비용: 대부분 무료)
+- [국립중앙도서관](https://teukang-moa.vercel.app/platform/nl-library.html): 국가 대표 도서관의 강연·세미나 프로그램 (진행 방식: 오프라인 강연 (본관 현장 참석) / 비용: 대부분 무료)
+- [서울시평생학습포털 (서울런4050)](https://teukang-moa.vercel.app/platform/sll.html): 서울시가 운영하는 공공 평생교육 강좌 (진행 방식: 오프라인 강좌 (지역 학습관·센터 연계) / 비용: 대부분 무료 또는 저비용)
+
+### 경영자·직무 특강
+- [한경아카데미](https://teukang-moa.vercel.app/platform/hankyung-academy.html): 한국경제신문이 운영하는 현장 특강 (진행 방식: 오프라인 현장 특강 / 비용: 유료 (과정별 상이))
+- [IGM세계경영연구원](https://teukang-moa.vercel.app/platform/igm.html): CEO와 임원이 직접 모이는 조찬 강연 (진행 방식: 오프라인 조찬회·세미나 중심 / 비용: 유료 (회원제·과정별 상이))
+- [한국생산성본부 (KPC)](https://teukang-moa.vercel.app/platform/kpc.html): CEO 경영 아카데미와 최고위 과정 (진행 방식: 오프라인 정규 과정·특강 / 비용: 유료 (과정별 상이))
+- [한국표준협회 (KSA)](https://teukang-moa.vercel.app/platform/ksa.html): 기업교육(KSAEDU)이 여는 직무 세미나 (진행 방식: 오프라인 세미나·교육과정 / 비용: 유료 (과정별 상이))
+
+### 북토크·살롱 모임
+- [트레바리](https://teukang-moa.vercel.app/platform/trevari.html): 매달 한 번, 직접 모여 대화하는 독서 클럽 (진행 방식: 오프라인 정기 모임 (월 1회, 아지트 방문) / 비용: 유료 (클럽·시즌별 회비))
+- [최인아책방](https://teukang-moa.vercel.app/platform/inabooks.html): 강남의 서점에서 열리는 저자 강연·북토크 (진행 방식: 오프라인 강연·북토크 (책방 현장) / 비용: 행사별 상이 (무료 북토크 포함))
+- [교보문고 보라(VORA)](https://teukang-moa.vercel.app/platform/kyobo-vora.html): 광화문 대산홀에서 만나는 저자 강연 (진행 방식: 오프라인 강연·북토크 (광화문 대산홀 현장) / 비용: 프로그램별 상이 (무료 북토크 포함))
+
+### 원데이클래스·액티비티
+- [탈잉](https://teukang-moa.vercel.app/platform/taling.html): 현장에서 배우는 원데이클래스·특강 (진행 방식: 오프라인 원데이클래스 (현장 실습 중심) / 비용: 유료 (클래스별 상이))
+- [프립 (Frip)](https://teukang-moa.vercel.app/platform/frip.html): 액티비티·모임을 현장에서 예약 (진행 방식: 오프라인 원데이클래스·모임 중심 / 비용: 유료 (모임별 상이))
+
+## 사이트 정보
+- [사이트 소개](https://teukang-moa.vercel.app/about.html)
+- [문의](https://teukang-moa.vercel.app/contact.html)
+- [개인정보처리방침](https://teukang-moa.vercel.app/privacy.html)
+- [이용약관](https://teukang-moa.vercel.app/terms.html)
+- [전체 상세 정보 (llms-full.txt)](https://teukang-moa.vercel.app/llms-full.txt)

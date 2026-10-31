@@ -3,7 +3,9 @@ import os
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE_NAME = "특강모아"
-SITE_DOMAIN = "https://teukgangmoa.vercel.app"  # TODO: 커스텀 도메인 구매 후 교체
+SITE_DOMAIN = "https://teukang-moa.vercel.app"
+UPDATED = "2026-10-31"
+INDEX_DESC = "화면이 아니라 현장에 직접 참석해서 듣는 오프라인 강연·강좌 신청처를 문화센터, 도서관, 직무 특강, 북토크, 원데이클래스로 나눠 정리했습니다."
 ADSENSE_PUB = "ca-pub-2557338953436433"
 CONTACT_EMAIL = "yjw2172@naver.com"
 NAVER_VERIFY = "c210150a24029e5660d54cb50a0b4fe6cb31aa85"
@@ -169,7 +171,7 @@ TOTAL = len(PLATFORMS)
 # shared partials
 # ---------------------------------------------------------------------------
 
-def head(title, description, path_depth=0, canonical_path=""):
+def head(title, description, path_depth=0, canonical_path="", extra_head=""):
     prefix = "../" * path_depth
     return f"""<!DOCTYPE html>
 <html lang="ko">
@@ -178,6 +180,9 @@ def head(title, description, path_depth=0, canonical_path=""):
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title}</title>
 <meta name="description" content="{description}">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="{SITE_NAME}">
 <link rel="canonical" href="{SITE_DOMAIN}{canonical_path}">
 <meta name="naver-site-verification" content="{NAVER_VERIFY}">
 <meta property="og:title" content="{title}">
@@ -189,7 +194,7 @@ def head(title, description, path_depth=0, canonical_path=""):
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={ADSENSE_PUB}" crossorigin="anonymous"></script>
-</head>
+{extra_head}</head>
 <body>
 """
 
@@ -279,12 +284,180 @@ def footer_html(prefix):
 </footer>
 """
 
-def page(title, description, body, path_depth=0, canonical_path=""):
+def page(title, description, body, path_depth=0, canonical_path="", schema=None):
     prefix = "../" * path_depth
-    return (head(title, description, path_depth, canonical_path)
+    extra = "".join(jsonld(x) for x in (schema or []))
+    return (head(title, description, path_depth, canonical_path, extra)
             + header_html(prefix) + body + footer_html(prefix)
             + ad_slot()
             + cookie_banner_html(prefix) + "</body>\n</html>\n")
+
+# ---------------------------------------------------------------------------
+# GEO (Generative Engine Optimization) helpers
+# ---------------------------------------------------------------------------
+import json
+
+def url(path):
+    return SITE_DOMAIN + path
+
+def jsonld(obj):
+    return '<script type="application/ld+json">' + json.dumps(obj, ensure_ascii=False) + '</script>\n'
+
+def breadcrumb_ld(items):
+    return {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": i, "name": n, "item": url(pth)}
+            for i, (n, pth) in enumerate(items, start=1)
+        ],
+    }
+
+def faq_ld(faqs):
+    return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": q,
+             "acceptedAnswer": {"@type": "Answer", "text": a}}
+            for q, a in faqs
+        ],
+    }
+
+def faq_html(faqs, title="자주 묻는 질문"):
+    items = "".join(f'<div class="faq-item"><h3>{q}</h3><p>{a}</p></div>' for q, a in faqs)
+    return f'<div class="faq"><h2>{title}</h2>{items}</div>'
+
+def summary_box(text):
+    return f'<div class="summary-box"><span class="k">한눈에 요약</span><p>{text}</p></div>'
+
+def updated_line():
+    return f'<p class="updated">정보 확인일: <time datetime="{UPDATED}">{UPDATED}</time></p>'
+
+def data_table(plats, prefix=""):
+    rows = "".join(
+        f'<tr><td><a href="{prefix}platform/{p["id"]}.html">{p["name"]}</a></td>'
+        f'<td>{CATEGORIES[p["category"]]["short"]}</td><td>{p["format"]}</td><td>{p["fee"]}</td></tr>'
+        for p in plats
+    )
+    return ('<div class="table-wrap"><table class="data-table"><thead><tr>'
+            '<th>이름</th><th>분류</th><th>진행 방식</th><th>비용</th></tr></thead>'
+            f'<tbody>{rows}</tbody></table></div>')
+
+# ---------- 요약 문구 (답변 우선 구조) ----------
+
+def index_summary():
+    parts = "; ".join(
+        f'{c["name"]}({len(cat_platforms(cid))}곳): ' + ", ".join(p["name"] for p in cat_platforms(cid))
+        for cid, c in CATEGORIES.items()
+    )
+    return (f"{SITE_NAME}는 직접 현장에 참석하는 오프라인 강연·강좌 신청처 {TOTAL}곳을 "
+            f"{len(CATEGORIES)}개 카테고리로 정리한 디렉토리입니다. {parts}. "
+            "온라인 강의 중심 플랫폼은 수록하지 않습니다.")
+
+def category_summary(cid):
+    c = CATEGORIES[cid]
+    ps = cat_platforms(cid)
+    names = ", ".join(p["name"] for p in ps)
+    return f"{c['name']} {len(ps)}곳 — {names}. {c['desc']}"
+
+def platform_summary(p):
+    c = CATEGORIES[p["category"]]
+    return (f"{p['name']} — {c['name']} 분야 오프라인 강연·강좌 신청처. {p['tagline']}. "
+            f"진행 방식: {p['format']} · 비용: {p['fee']} · 주요 대상: {p['audience']}.")
+
+# ---------- FAQ (화면에 보이는 내용 = JSON-LD 내용) ----------
+
+def index_faqs():
+    by = {cid: cat_platforms(cid) for cid in CATEGORIES}
+    pub_free = [p["name"] for p in PLATFORMS if p["fee"].startswith("대부분 무료")]
+    salon_free = [p["name"] for p in PLATFORMS if "무료 북토크" in p["fee"]]
+    biz = ", ".join(p["name"] for p in by["business"])
+    return [
+        ("오프라인 강연·강좌는 어디서 신청하나요?",
+         f"{SITE_NAME}에는 직접 현장에 참석하는 강연·강좌 신청처 {TOTAL}곳이 {len(CATEGORIES)}개 카테고리로 정리돼 있습니다. "
+         f"백화점·마트 문화센터({len(by['culture'])}곳), 도서관·공공 강연({len(by['public'])}곳), "
+         f"경영자·직무 특강({len(by['business'])}곳), 북토크·살롱 모임({len(by['salon'])}곳), "
+         f"원데이클래스·액티비티({len(by['oneday'])}곳)이며, 각 상세 페이지의 바로가기 버튼으로 공식 사이트에서 신청할 수 있습니다."),
+        ("무료 또는 저비용으로 들을 수 있는 오프라인 강연은 어디인가요?",
+         f"다음 곳은 대부분 무료 또는 저비용으로 운영됩니다: {', '.join(pub_free)}. "
+         f"{', '.join(salon_free)}에서는 무료 북토크도 열립니다. 강좌별 비용과 신청 조건은 공식 사이트에서 확인하세요."),
+        ("직장인이 들을 만한 직무·경영 특강은 어디서 신청하나요?",
+         f"경영·직무 특강은 {biz}에서 현장 참석형으로 운영합니다. "
+         "경영진 대상 조찬 강연, 이슈 중심 1일 특강, 최고경영자 과정 등으로 구성되며 과정별로 비용이 다르므로 공식 사이트에서 확인하세요."),
+        ("특강모아는 강좌를 직접 판매하거나 예약을 대행하나요?",
+         "아니요. 특강모아는 각 기관·플랫폼의 공개 정보를 요약해 안내하는 정보 제공 사이트이며, 신청과 결제는 각 공식 사이트에서 직접 진행합니다."),
+        ("온라인 강의도 포함되어 있나요?",
+         "포함하지 않습니다. 온라인 시청이 중심인 플랫폼은 수록 기준에서 제외하고, 현장 참석이 기본인 강연·강좌만 수록합니다."),
+        ("정보는 언제 기준인가요?",
+         f"각 페이지에 정보 확인일을 표기하며, 현재 기준일은 {UPDATED}입니다. 강좌 일정과 비용은 지점·시즌에 따라 바뀔 수 있어 신청 전 공식 사이트 확인이 필요합니다."),
+    ]
+
+def category_faqs(cid):
+    c = CATEGORIES[cid]
+    ps = cat_platforms(cid)
+    names = ", ".join(p["name"] for p in ps)
+    return [
+        (f"{c['name']}에는 어떤 곳이 있나요?", f"{names} 등 {len(ps)}곳이 수록돼 있습니다. {c['desc']}"),
+        (f"{c['short']} 강연·강좌는 어떻게 신청하나요?",
+         "각 상세 페이지의 바로가기 버튼으로 공식 사이트에 이동해 신청합니다. 일정, 비용, 환불 규정은 지점·시즌에 따라 다르므로 공식 사이트 안내를 확인하세요."),
+    ]
+
+def platform_faqs(p):
+    return [
+        (f"{p['name']}: 어떤 곳인가요?", p["desc"]),
+        (f"{p['name']}: 강연·강좌는 어떻게 진행되나요?", f"진행 방식: {p['format']}. 신청은 공식 사이트에서 진행합니다."),
+        (f"{p['name']}: 비용은 얼마인가요?", f"{p['fee']}. 정확한 금액과 환불 규정은 공식 사이트에서 확인하세요."),
+        (f"{p['name']}: 누구에게 적합한가요?", f"주요 대상: {p['audience']}."),
+    ]
+
+# ---------- JSON-LD 스키마 ----------
+
+def index_schema():
+    return [
+        {"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME,
+         "url": url("/"), "inLanguage": "ko-KR", "description": INDEX_DESC},
+        {"@context": "https://schema.org", "@type": "Organization", "name": SITE_NAME,
+         "url": url("/"), "email": CONTACT_EMAIL},
+        {"@context": "https://schema.org", "@type": "ItemList",
+         "name": "직접 가서 듣는 오프라인 강연·강좌 신청처", "numberOfItems": TOTAL,
+         "itemListElement": [
+             {"@type": "ListItem", "position": i, "name": p["name"], "url": url(f"/platform/{p['id']}.html")}
+             for i, p in enumerate(PLATFORMS, start=1)
+         ]},
+        faq_ld(index_faqs()),
+    ]
+
+def category_schema(cid):
+    c = CATEGORIES[cid]
+    ps = cat_platforms(cid)
+    return [
+        {"@context": "https://schema.org", "@type": "CollectionPage", "name": c["name"],
+         "url": url(f"/category/{cid}.html"), "description": c["desc"], "inLanguage": "ko-KR",
+         "dateModified": UPDATED,
+         "isPartOf": {"@type": "WebSite", "name": SITE_NAME, "url": url("/")},
+         "mainEntity": {"@type": "ItemList", "numberOfItems": len(ps),
+                        "itemListElement": [
+                            {"@type": "ListItem", "position": i, "name": p["name"],
+                             "url": url(f"/platform/{p['id']}.html")}
+                            for i, p in enumerate(ps, start=1)
+                        ]}},
+        breadcrumb_ld([(SITE_NAME, "/"), (c["name"], f"/category/{cid}.html")]),
+        faq_ld(category_faqs(cid)),
+    ]
+
+def platform_schema(p):
+    c = CATEGORIES[p["category"]]
+    return [
+        {"@context": "https://schema.org", "@type": "WebPage", "name": f"{p['name']} — {p['tagline']}",
+         "url": url(f"/platform/{p['id']}.html"), "description": p["desc"], "inLanguage": "ko-KR",
+         "dateModified": UPDATED,
+         "isPartOf": {"@type": "WebSite", "name": SITE_NAME, "url": url("/")},
+         "about": {"@type": "Organization", "name": p["name"], "url": p["url"]}},
+        breadcrumb_ld([(SITE_NAME, "/"), (c["name"], f"/category/{p['category']}.html"),
+                       (p["name"], f"/platform/{p['id']}.html")]),
+        faq_ld(platform_faqs(p)),
+    ]
 
 def write(relpath, content):
     full = os.path.join(ROOT, relpath)
@@ -342,15 +515,20 @@ def build_index():
 
 <section class="section">
   <div class="wrap">
+    {summary_box(index_summary())}
     <div class="cat-tabs">{cat_tabs}</div>
     {sections}
+    <h2 class="block-title">전체 신청처 한눈에 비교</h2>
+    {data_table(PLATFORMS)}
+    {faq_html(index_faqs())}
+    {updated_line()}
   </div>
 </section>
 """
     write("index.html", page(
         f"{SITE_NAME} | 직접 가서 듣는 오프라인 강연·강좌 모음",
-        "화면이 아니라 현장에 직접 참석해서 듣는 오프라인 강연·강좌 신청처를 문화센터, 도서관, 직무 특강, 북토크, 원데이클래스로 나눠 정리했습니다.",
-        body, path_depth=0, canonical_path="/"))
+        INDEX_DESC,
+        body, path_depth=0, canonical_path="/", schema=index_schema()))
 
 def build_categories():
     for cid, c in CATEGORIES.items():
@@ -365,16 +543,21 @@ def build_categories():
 </section>
 <section class="section">
   <div class="wrap">
+    {summary_box(category_summary(cid))}
     <div class="section-head">
       <h2>수록된 현장 강연처 {len(cat_platforms(cid))}곳</h2>
     </div>
     <div class="card-grid">{cards}</div>
+    <h2 class="block-title">한눈에 비교</h2>
+    {data_table(cat_platforms(cid), prefix="../")}
+    {faq_html(category_faqs(cid))}
+    {updated_line()}
   </div>
 </section>
 """
         write(f"category/{cid}.html", page(
             f"{c['name']} 신청처 모음 | {SITE_NAME}", c['desc'],
-            body, path_depth=1, canonical_path=f"/category/{cid}.html"))
+            body, path_depth=1, canonical_path=f"/category/{cid}.html", schema=category_schema(cid)))
 
 def build_platforms():
     for p in PLATFORMS:
@@ -393,6 +576,7 @@ def build_platforms():
 </section>
 <section class="section">
   <div class="wrap">
+    {summary_box(platform_summary(p))}
     <div class="info-grid">
       <div class="cell"><div class="k">진행 방식</div><div class="v">{p['format']}</div></div>
       <div class="cell"><div class="k">주요 대상</div><div class="v">{p['audience']}</div></div>
@@ -408,12 +592,14 @@ def build_platforms():
       <a class="btn ghost" href="../category/{p['category']}.html">{c['name']} 더 보기</a>
     </div>
     <div class="disclaimer">본 페이지는 {p['name']}의 공개된 정보를 바탕으로 요약 정리한 안내이며, 실제 강좌 일정·비용·신청 조건은 지점·시즌에 따라 달라질 수 있습니다. 정확한 정보와 신청은 반드시 공식 사이트에서 확인해 주세요.</div>
+    {faq_html(platform_faqs(p))}
+    {updated_line()}
   </div>
 </section>
 """
         write(f"platform/{p['id']}.html", page(
             f"{p['name']} — {p['tagline']} | {SITE_NAME}", p['desc'],
-            body, path_depth=1, canonical_path=f"/platform/{p['id']}.html"))
+            body, path_depth=1, canonical_path=f"/platform/{p['id']}.html", schema=platform_schema(p)))
 
 def static_page(slug, title, html_body):
     body = f"""
@@ -437,6 +623,8 @@ def build_static_pages():
   <li>공식 홈페이지 또는 서비스가 운영 중인 곳</li>
 </ul>
 <p>온라인 강의가 중심인 플랫폼은 수록 기준에서 제외했습니다. 오프라인 행사를 부정기로만 여는 곳도 우선순위에서 제외하고, 정기적으로 현장 강좌를 여는 곳 위주로 골랐습니다.</p>
+<h2>정보 출처</h2>
+<p>각 기관·플랫폼의 공식 홈페이지에 공개된 정보를 기준으로 작성하며, 신청 링크는 모두 공식 사이트로 연결됩니다. 각 페이지에 정보 확인일을 표기합니다.</p>
 <h2>정보 업데이트</h2>
 <p>강좌 일정과 정책은 지점·시즌에 따라 자주 바뀔 수 있어, 정기적으로 내용을 점검하고 업데이트하고 있습니다. 잘못된 정보를 발견하셨다면 문의 페이지를 통해 알려주세요.</p>
 """)
@@ -484,14 +672,59 @@ def build_static_pages():
 <p>본 약관은 2026년 8월부터 적용됩니다.</p>
 """)
 
+AI_BOTS = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-User", "Claude-SearchBot",
+           "PerplexityBot", "Perplexity-User", "Google-Extended", "Applebot-Extended", "CCBot"]
+
+def build_llms():
+    lines = [f"# {SITE_NAME}", "",
+             f"> 직접 현장에 참석해서 듣는 오프라인 강연·강좌 신청처 {TOTAL}곳을 {len(CATEGORIES)}개 카테고리로 정리한 한국어 디렉토리. "
+             "온라인 강의 중심 플랫폼은 제외. 신청·결제는 각 공식 사이트에서 진행하며 이 사이트는 정보 안내만 제공함.", "",
+             f"정보 확인일: {UPDATED} / 문의: {CONTACT_EMAIL}", "", "## 카테고리"]
+    for cid, c in CATEGORIES.items():
+        lines.append(f"- [{c['name']}]({url('/category/' + cid + '.html')}): {c['desc']}")
+    lines += ["", "## 신청처"]
+    for cid, c in CATEGORIES.items():
+        lines.append(f"### {c['name']}")
+        for p in cat_platforms(cid):
+            lines.append(f"- [{p['name']}]({url('/platform/' + p['id'] + '.html')}): {p['tagline']} "
+                         f"(진행 방식: {p['format']} / 비용: {p['fee']})")
+        lines.append("")
+    lines += ["## 사이트 정보",
+              f"- [사이트 소개]({url('/about.html')})",
+              f"- [문의]({url('/contact.html')})",
+              f"- [개인정보처리방침]({url('/privacy.html')})",
+              f"- [이용약관]({url('/terms.html')})",
+              f"- [전체 상세 정보 (llms-full.txt)]({url('/llms-full.txt')})", ""]
+    return "\n".join(lines)
+
+def build_llms_full():
+    out = [f"# {SITE_NAME} — 전체 상세 정보", "", f"정보 확인일: {UPDATED}", ""]
+    for cid, c in CATEGORIES.items():
+        out += [f"## {c['name']}", c["desc"], ""]
+        for p in cat_platforms(cid):
+            out += [f"### {p['name']}",
+                    f"- 공식 사이트: {p['url']}",
+                    f"- 상세 페이지: {url('/platform/' + p['id'] + '.html')}",
+                    f"- 한 줄 소개: {p['tagline']}",
+                    f"- 설명: {p['desc']}",
+                    f"- 주요 대상: {p['audience']}",
+                    f"- 진행 방식: {p['format']}",
+                    f"- 비용: {p['fee']}",
+                    "- 특징: " + "; ".join(p["features"]), ""]
+    return "\n".join(out)
+
 def build_infra_files():
     write("ads.txt", "google.com, pub-2557338953436433, DIRECT, f08c47fec0942fa0\n")
-    write("robots.txt", f"User-agent: *\nAllow: /\n\nSitemap: {SITE_DOMAIN}/sitemap.xml\n")
+    bots = "".join(f"User-agent: {b}\nAllow: /\n\n" for b in AI_BOTS)
+    write("robots.txt", f"User-agent: *\nAllow: /\n\n{bots}Sitemap: {SITE_DOMAIN}/sitemap.xml\n")
     urls = ["/", "/about.html", "/contact.html", "/privacy.html", "/terms.html"]
     urls += [f"/category/{cid}.html" for cid in CATEGORIES]
     urls += [f"/platform/{p['id']}.html" for p in PLATFORMS]
-    items = "".join(f"  <url><loc>{SITE_DOMAIN}{u}</loc></url>\n" for u in urls)
-    write("sitemap.xml", f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{items}</urlset>\n')
+    items = "".join(f"  <url><loc>{SITE_DOMAIN}{u}</loc><lastmod>{UPDATED}</lastmod></url>\n" for u in urls)
+    write("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n'
+          '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + items + '</urlset>\n')
+    write("llms.txt", build_llms())
+    write("llms-full.txt", build_llms_full())
 
 if __name__ == "__main__":
     build_index()
