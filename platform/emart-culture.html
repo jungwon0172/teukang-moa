@@ -21,10 +21,9 @@
 <header class="site-header">
   <div class="bar wrap">
     <a href="../index.html" class="brand">특강모아 <span class="stub">No. 001-019</span></a>
-    <button class="nav-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">MENU</button>
     <nav class="main-nav">
-      <a href="../category/culture.html">문화센터</a><a href="../category/public.html">공공강연</a><a href="../category/business.html">직무특강</a><a href="../category/salon.html">북토크</a><a href="../category/oneday.html">원데이클래스</a>
-      <a href="../about.html">사이트 소개</a>
+      <a href="../about.html">소개</a>
+      <a href="../contact.html">문의</a>
     </nav>
   </div>
 </header>
@@ -76,11 +75,6 @@
     <div class="copyright">&copy; 2026 특강모아. 본 사이트는 직접 현장에 참석하는 오프라인 강연·강좌 정보를 요약해 안내하는 정보 제공 사이트이며, 신청 및 결제는 각 기관·플랫폼에서 직접 진행됩니다.</div>
   </div>
 </footer>
-<script>
-  document.addEventListener('click', function(e){
-    if(!e.target.closest('.site-header')) document.querySelector('.main-nav')?.classList.remove('open');
-  });
-</script>
 <div class="ad-slot wrap">
   <span>광고 영역 · 애드센스 승인 후 표시됩니다</span>
 </div>
@@ -108,7 +102,7 @@
       localStorage.setItem(KEY, 'declined');
       banner.classList.remove('show');
     });
-  } catch(e) { /* localStorage unavailable — banner simply won't persist */ }
+  } catch(e) { /* localStorage unavailable */ }
 })();
 </script>
 </body>
